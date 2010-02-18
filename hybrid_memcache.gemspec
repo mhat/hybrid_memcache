@@ -26,6 +26,8 @@ Gem::Specification.new do |s|
      "hybrid_memcache.gemspec",
      "lib/hybrid_memcache.rb",
      "test/helper.rb",
+     "test/memcache_test.rb",
+     "test/test_helper.rb",
      "test/test_hybrid_memcache.rb"
   ]
   s.homepage = %q{http://github.com/mhat/hybrid_memcache}
@@ -35,6 +37,8 @@ Gem::Specification.new do |s|
   s.summary = %q{ninjudd-memcached compatible interface to fauna-memcached}
   s.test_files = [
     "test/helper.rb",
+     "test/memcache_test.rb",
+     "test/test_helper.rb",
      "test/test_hybrid_memcache.rb"
   ]
 
