@@ -1,6 +1,6 @@
 require 'memcached'
 
-class HybridMemcache < Memcached
+class Memcache < Memcached
   WRITE_LOCK_WAIT = 1
   LOCK_TIMEOUT    = 5
   
@@ -9,16 +9,25 @@ class HybridMemcache < Memcached
     @namespace = ""
     
     super(servers, {
-      :default_ttl      =>   0,
-      :prefix_key       =>  '',
-      :prefix_delimiter =>  '',
-      :support_cas      => true
-    }.merge(opts))
+      :prefix_key           =>  '',
+      :prefix_delimiter     =>  '',
+      :support_cas          => true,
+      
+      :hash                 => :fnv1_32,
+      :distribution         => :consistent_ketama,
+      :ketama_weighted      => true,
+      :server_failure_limit => 2,
+      :retry_timeout        => 30,
+      
+      :default_ttl          => 604800,
+    }.merge!(opts))
   end
 
 
   def clone
-     self.class.new({ :servers => servers }.merge(options))
+     klone = self.class.new({ :servers => servers }.merge(options))
+     klone.set_namespace @namespace
+     klone
   end
 
 
@@ -75,7 +84,10 @@ class HybridMemcache < Memcached
       
       ## Single get
       value, flags, ret = Lib.memcached_get_rvalue(@struct, normalize_keys(keys))
+      
+      ## ninjudd-memcache treats broken servers as cache missis, so return nil
       check_return_code(ret, keys)
+      return nil unless ret == 0
       
       if marshal
         value = Marshal.load(value) 
@@ -87,17 +99,23 @@ class HybridMemcache < Memcached
     else
       ## Multi get
       return {} if keys.empty?
-  
+
       ## ninjudd-memcache normalizes keys into the form namespace:index:key
       ## but it hides this form from the caller, so the caller expects to 
       ## get a hash with the keys in their denormalized form. That's what
       ## the norm_to_std hash is all about. 
       normalized  = normalize_keys(keys)
       norm_to_std = {}
-      keys.each_with_index {|k,idx| norm_to_std[normalized[idx]] = keys[idx] }
+      
+      ## but note, the keys have to be transformed into strings, even if they
+      ## started out as fixnums
+      keys.each_with_index {|k,idx| norm_to_std[normalized[idx]] = keys[idx].to_s }
       
       ret = Lib.memcached_mget(@struct, normalized)
+      
+      ## once again: potentiall braken server == cache miss
       check_return_code(ret, normalized)
+      return {} unless ret == 0
     
       hash = {}
       keys.each do
@@ -232,6 +250,7 @@ class HybridMemcache < Memcached
 
 
   def get_some(keys, opts = {})
+    keys    = keys.collect { |k| k.to_s }
     records = opts[:disable] ? {} : self.get(keys, opts)
     
     if opts[:validation]
