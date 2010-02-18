@@ -306,7 +306,7 @@ class Memcache < Memcached
     super(normalize_keys(key))
     return true
   rescue Memcached::NotFound
-    return false
+    return nil
   end
 
 
