@@ -10,7 +10,8 @@ begin
     gem.email       = "mknopp@yammer-inc.com"
     gem.homepage    = "http://github.com/mhat/hybrid_memcache"
     gem.authors     = ["Matthew Knopp"]
-    gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
+
+    gem.add_dependency "memcached", ">= 0.18.0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

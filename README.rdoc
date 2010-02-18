@@ -1,6 +1,6 @@
-= fauna-ninjudd-hybrid-memcache
+= hybrid-memcache
 
-Description goes here.
+ninjudd-memcache compatible interface on top of fauna-memcached
 
 == Note on Patches/Pull Requests
  
