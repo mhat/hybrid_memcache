@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{hybrid_memcache}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matthew Knopp"]
-  s.date = %q{2010-02-17}
+  s.date = %q{2010-02-18}
   s.description = %q{the summary says it all.}
   s.email = %q{mknopp@yammer-inc.com}
   s.extra_rdoc_files = [
@@ -26,6 +26,8 @@ Gem::Specification.new do |s|
      "hybrid_memcache.gemspec",
      "lib/hybrid_memcache.rb",
      "test/helper.rb",
+     "test/memcache_test.rb",
+     "test/test_helper.rb",
      "test/test_hybrid_memcache.rb"
   ]
   s.homepage = %q{http://github.com/mhat/hybrid_memcache}
@@ -35,6 +37,8 @@ Gem::Specification.new do |s|
   s.summary = %q{ninjudd-memcached compatible interface to fauna-memcached}
   s.test_files = [
     "test/helper.rb",
+     "test/memcache_test.rb",
+     "test/test_helper.rb",
      "test/test_hybrid_memcache.rb"
   ]
 
