@@ -86,7 +86,7 @@ class Memcache < Memcached
       value, flags, ret = Lib.memcached_get_rvalue(@struct, normalize_keys(keys))
       
       ## ninjudd-memcache treats broken servers as cache missis, so return nil
-      check_return_code(ret, keys)
+      ## check_return_code(ret, keys)
       return nil unless ret == 0
       
       if marshal
@@ -114,7 +114,7 @@ class Memcache < Memcached
       ret = Lib.memcached_mget(@struct, normalized)
       
       ## once again: potentiall braken server == cache miss
-      check_return_code(ret, normalized)
+      ## check_return_code(ret, normalized)
       return {} unless ret == 0
     
       hash = {}
@@ -123,14 +123,19 @@ class Memcache < Memcached
         if ret == Lib::MEMCACHED_END
           break 
         end
-        check_return_code(ret, key)
         
-        # Assign the value
-        if marshal
-          value = Marshal.load(value) 
-        end 
-        value.memcache_cas   = cas ? @struct.result.cas : false
-        value.memcache_flags = flags
+        if ret != 0 
+          ## once again: potentiall braken server == cache miss
+          ## check_return_code(ret, key) 
+          value = nil 
+        else  
+          # Assign the value
+          if marshal
+            value = Marshal.load(value) 
+          end 
+          value.memcache_cas   = cas ? @struct.result.cas : false
+          value.memcache_flags = flags
+        end
         
         hash[ norm_to_std[key] ] = value
       end
