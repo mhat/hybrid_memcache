@@ -154,7 +154,7 @@ class Memcache < Memcached
   def set(key, value, opts={})
     super(normalize_keys(key), value, *opts_to_params(opts))
     return value
-  rescue Memcache::NotFound
+  rescue Memcached::NotFound
     return nil
   end
 
@@ -167,7 +167,7 @@ class Memcache < Memcached
   def replace(key, value, opts={})
     super(normalize_keys(key), value, *opts_to_params(opts))
     return value
-  rescue Memcache::NotStored
+  rescue Memcached::NotStored
     return nil
   end
 
@@ -181,7 +181,7 @@ class Memcache < Memcached
     value.memcache_cas   = @struct.result.cas
     value.memcache_flags = @struct.result.flags
     return value
-  rescue Memcache::NotStored
+  rescue Memcached::NotStored
    return nil
   end
 
@@ -189,7 +189,7 @@ class Memcache < Memcached
   def prepend(key,value)
     super(normalize_keys(key), value)
     return true
-  rescue Memcache::NotStored
+  rescue Memcached::NotStored
     return false
   end
 
@@ -197,7 +197,7 @@ class Memcache < Memcached
   def append(key, value)
     super(normalize_keys(key), value)
     return true
-  rescue Memcache::NotStored
+  rescue Memcached::NotStored
     return false
   end
 
@@ -209,7 +209,7 @@ class Memcache < Memcached
 
   def increment(key, amount=1)
     super(normalize_keys(key), amount)
-  rescue Memcache::NotStored
+  rescue Memcached::NotFound
     return nil
   end
   alias incr increment
@@ -217,7 +217,7 @@ class Memcache < Memcached
 
   def decrement(key, amount=1)
     super(normalize_keys(key), amount)
-  rescue Memcache::NotStored
+  rescue Memcached::NotFound
     return nil
   end
   alias decr decrement
